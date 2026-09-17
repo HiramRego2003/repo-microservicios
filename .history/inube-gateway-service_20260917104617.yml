@@ -1,0 +1,15 @@
+ spring:
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enable: false
+          lowe-case-service-id: true
+          
+          
+          routes:
