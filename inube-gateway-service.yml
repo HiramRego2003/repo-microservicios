@@ -1,21 +1,20 @@
- spring:
+spring:
   data:
     redis:
       host: localhost
       port: 6379
-      
+
   cloud:
     gateway:
       discovery:
         locator:
-          enable: false
-          lowe-case-service-id: true
-          
-      routes:
+          enabled: false
+          lower-case-service-id: true
 
+      routes:
         - id: inube-auth-auth
           uri: lb://INUBE-AUTHENTICATION-SERVICE
-          predicates: 
+          predicates:
             - Path=/api/inube/auth/**
           filters:
             - name: RequestRateLimiter
@@ -30,20 +29,18 @@
             - Path=/api/inube/user/**
           filters:
             - AuthenticationFilter
-            
+
         - id: inube-service
           uri: lb://INUBE-SERVICE
           predicates:
-            - Path=/api/inube/service/ **
+            - Path=/api/inube/service/**
           filters:
             - AuthenticationFilter
 
         - id: books-service
           uri: lb://BOOKS-SERVICE
-
           predicates:
-            - Path=/api/inube/books/ **
-
+            - Path=/api/inube/books/**
           filters:
             - AuthenticationFilter
 
@@ -56,7 +53,7 @@
             - name: CircuitBreaker
               args:
                 name: booksCircuitBreaker
-                fallbackUri: forwad:/fallback/books
+                fallbackUri: forward:/fallback/books
 
 eureka:
   client:
@@ -65,7 +62,7 @@ eureka:
     register-with-eureka: true
     fetch-registry: true
     healthcheck:
-      enable: true
+      enabled: true
 
   instance:
     lease-renewal-interval-in-seconds: 5
@@ -92,9 +89,9 @@ management:
   prometheus:
     metrics:
       export:
-        enable: true
+        enabled: true
 
-jwt: 
+jwt:
   secret: e4b7f9d2a13c4efb92d7c31ae8f04c9bd3e27fa649c8d1e0b57a23cf8b9e41ac
 
 info:
@@ -103,48 +100,30 @@ info:
     version: 1.0.0
 
 logging:
-  level: 
-    org.springframework.cloud.gateway: INFO 
+  level:
+    org.springframework.cloud.gateway: INFO
     com.inube.inube_gateway_service: DEBUG
 
-resilience4j: 
-
-  CircuitBreaker:
-
+resilience4j:
+  circuitbreaker:
     instances:
-
-      authCircuitBraker:
-
+      authCircuitBreaker:
         slidingWindowSize: 10
-
         minimumNumberOfCalls: 5
-
         failureRateThreshold: 50
-
         waitDurationInOpenState: 30s
-
         permittedNumberOfCallsInHalfOpenState: 3
 
       authUserCircuitBreaker:
-
         slidingWindowSize: 10
-
         minimumNumberOfCalls: 5
-
         failureRateThreshold: 50
-
         waitDurationInOpenState: 30s
-
         permittedNumberOfCallsInHalfOpenState: 3
 
       booksCircuitBreaker:
-
         slidingWindowSize: 10
-
         minimumNumberOfCalls: 5
-
         failureRateThreshold: 50
-
         waitDurationInOpenState: 30s
-
         permittedNumberOfCallsInHalfOpenState: 3
